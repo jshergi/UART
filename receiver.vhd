@@ -47,7 +47,7 @@ architecture behaviour of receiver is
 			clk => clk_b, rst => rst_b, baud_pulse => baud_pulse_b, sampling_pulse => sampling_pulse_b); 
 			clk_b <= clk; 
 			rst_b <= rst; 
-		process (rst, sampling_pulse_b) --clk, 
+		process (rst, sampling_pulse_b, clk) --clk, 
 			variable n : integer := 0; 
 			variable over_s_counter : integer := 0; 
 		
