@@ -34,7 +34,7 @@ architecture behaviour of receiver is
 			sampling_pulse : out std_logic); 
 	end component; 
 	
-	type state_type is (idle, start, data, stop); 
+	type state_type is (idle, start, data, stop, error_state); 
 	signal rx_state : state_type;
 	signal parity_error : std_logic;
 	signal rx_loaded : std_logic_Vector(10 downto 0) := (others => '0'); --parity + w
@@ -50,6 +50,7 @@ architecture behaviour of receiver is
 		process (rst, sampling_pulse_b, clk) --clk, 
 			variable n : integer := 0; 
 			variable over_s_counter : integer := 0; 
+			variable error : std_logic := '0'; 
 		
 			begin
 				if (rst = '0') then
@@ -66,11 +67,14 @@ architecture behaviour of receiver is
 							if (rx = '0') then
 								over_s_counter := 0; 
 								rx_busy <= '1'; 
-								rx_state <= start; 
+								rx_state <= start;
+								
 							else
 								rx_busy <= '0'; 
 								rx_state <= idle; 
 							end if;
+							
+							rx_loaded(10 downto 0) <= "00000000000"; 
 							
 						when start =>
 							if (over_s_counter < 7) then
@@ -105,12 +109,23 @@ architecture behaviour of receiver is
 								over_s_counter := over_s_counter +1; 
 								rx_state <= stop; 
 							else
-								rx_data <= rx_loaded(w downto 1);
-								rx_error <= rx_loaded(0) or parity_error or not rx;
-								rx_busy <= '0';
-								rx_state <= idle; 
-							end if; 
+								error := rx_loaded(0) or parity_error or not rx;
 								
+								if (error = '0') then 
+									rx_data <= rx_loaded(w downto 1);
+									rx_state <= idle;
+									rx_busy <= '0';	
+								else 
+									rx_state <= error_state; 
+									rx_busy <= '1';
+								end if; 
+								rx_error <= rx_loaded(0) or parity_error or not rx;
+								--rx_state <= idle; 
+							end if; 
+							
+						when error_state =>
+							rx_busy <= '0'; 
+							rx_state <= idle; 	
 					end case;
 				end if;
 		end process; 
