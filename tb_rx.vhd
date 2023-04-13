@@ -73,6 +73,43 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '1'; 
 		wait for 104000 ns;
 		
+		rx <= '0'; --1
+		wait for 104000 ns;
+		
+		rx <= '0'; --1
+		wait for 104000 ns;
+		-- next case
+		
+		rx <= '0'; --1
+		wait for 104000 ns;
+		
+		rx <= '1'; --1
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
 		rx <= '1'; 
 		wait for 104000 ns;
 		
