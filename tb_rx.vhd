@@ -11,8 +11,7 @@ component receiver is
 
 	generic(
 		w : integer := 8;
-		parity_even : std_logic := '0'; 
-		parity : integer := 1); 
+		parity_even : std_logic := '0'); 
 	
 	port(
 		clk : in std_logic;
@@ -40,15 +39,15 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 
 	process is 
 		begin
+		
+		-- Test case #1: Error case - stop bit incorrect (low instead of high). Expected data: "00000111".
 		rst <= '1';
-		rx <= '0'; 
+		rx <= '0'; -- Start bit
 		wait for 104000 ns; 
 		
-		--rst <= '1';
 		rx <= '1'; 
 		wait for 104000 ns; 
 		
-		--rst <= '1';
 		rx <= '1'; 
 		wait for 104000 ns;
 		
@@ -70,17 +69,18 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '0'; 
 		wait for 104000 ns;
 		
-		rx <= '1'; 
+		rx <= '1'; -- Parity bit: odd for "00000111"
 		wait for 104000 ns;
 		
-		rx <= '0'; --1
+		rx <= '0'; --1 -- Stop bit: incorrect (should be high)
 		wait for 104000 ns;
 		
-		rx <= '0'; --1
+		rx <= '0'; --1 
 		wait for 104000 ns;
-		-- next case
 		
-		rx <= '0'; --1
+		
+		-- Test case #2: Error case - parity bit incorrect (low instead of high).  Expected data: "00000111".
+		rx <= '0'; --1 -- Start bit
 		wait for 104000 ns;
 		
 		rx <= '1'; --1
@@ -107,11 +107,121 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '0'; 
 		wait for 104000 ns;
 		
+		rx <= '0'; -- Parity bit: should be odd for "00000111"
+		wait for 104000 ns;
+		
+		rx <= '1'; -- Stop bit: correct
+		wait for 104000 ns;
+		
+		
+		-- Test case #3: Successfully received data (correct odd parity and stop bits). Expected data: "00000111".
+		rx <= '0'; --1 -- Start bit
+		wait for 104000 ns;
+		
+		rx <= '1'; --1
+		wait for 104000 ns;
+		
 		rx <= '1'; 
 		wait for 104000 ns;
 		
 		rx <= '1'; 
 		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; -- Parity bit: odd for "00000111"
+		wait for 104000 ns;
+		
+		rx <= '1'; -- Stop bit: correct
+		wait for 1040000 ns;
+		
+		-- Test case #4: Successfully received data (correct even parity and stop bits). Expected data: "00110110".
+		rx <= '0'; --1 -- Start bit
+		wait for 104000 ns;
+		
+		rx <= '0';
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; -- Parity bit: even for "00110110"
+		wait for 104000 ns;
+		
+		rx <= '1'; -- Stop bit: correct
+		wait for 1040000 ns;
+		
+		-- Test case #5: Asynchronous reset. Expected data: "11011001".
+		rst <= '0';
+		wait for 208000 ns;
+				
+		rst <= '1';
+		wait for 104000 ns;
+		
+		rx <= '0'; --1 -- Start bit
+		wait for 104000 ns;
+		
+		rx <= '1';
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '0'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; 
+		wait for 104000 ns;
+		
+		rx <= '1'; -- Parity bit: odd for "11011001"
+		wait for 104000 ns;
+		
+		rx <= '1'; -- Stop bit: correct
+		wait for 1040000 ns;
+		
 		
 		wait; 
 	end process; 
