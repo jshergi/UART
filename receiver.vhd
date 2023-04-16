@@ -6,8 +6,7 @@ entity receiver is
 
 	generic(
 		w : integer := 8;
-		parity_even : std_logic := '0'; 
-		parity : integer := 1); 
+		parity_even : std_logic := '0'); 
 	
 	port(
 		clk : in std_logic;
@@ -124,7 +123,9 @@ architecture behaviour of receiver is
 							end if; 
 							
 						when error_state =>
-							rx_busy <= '0'; 
+							rx_busy <= '0';
+							error := '0';
+							rx_error <= '0';
 							rx_state <= idle; 	
 					end case;
 				end if;
