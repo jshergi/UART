@@ -36,7 +36,7 @@ architecture behaviour of receiver is
 	type state_type is (idle, start, data, stop, error_state); 
 	signal rx_state : state_type;
 	signal parity_error : std_logic;
-	signal rx_loaded : std_logic_Vector(10 downto 0) := (others => '0'); --parity + w
+	signal rx_loaded : std_logic_Vector(10 downto 0) := (others => '0'); 
 	signal data_parity : std_logic_vector(w downto 0); 
 	
 	signal clk_b, rst_b, baud_pulse_b, sampling_pulse_b : std_logic; 
@@ -46,7 +46,7 @@ architecture behaviour of receiver is
 			clk => clk_b, rst => rst_b, baud_pulse => baud_pulse_b, sampling_pulse => sampling_pulse_b); 
 			clk_b <= clk; 
 			rst_b <= rst; 
-		process (rst, sampling_pulse_b, clk) --clk, 
+		process (rst, sampling_pulse_b, clk)  
 			variable n : integer := 0; 
 			variable over_s_counter : integer := 0; 
 			variable error : std_logic := '0'; 
@@ -57,9 +57,9 @@ architecture behaviour of receiver is
 					n := 0;
 					rx_busy <= '0';
 					rx_error <= '0';
-					rx_data <= (others => '0'); 
+					rx_data <= (others => 'X'); -- should be unknown when rst
 					rx_state <= idle; 
-				elsif (rising_edge(clk) and sampling_pulse_b = '1') then --rising_edge(sampling_pulse_b)
+				elsif (rising_edge(clk) and sampling_pulse_b = '1') then 
 					case rx_state is 
 						when idle =>
 							rx_busy <= '0';
@@ -82,7 +82,7 @@ architecture behaviour of receiver is
 							else
 								over_s_counter := 0;
 								n := 0; 
-								rx_loaded <= rx & rx_loaded(10 downto 1); --parity + w
+								rx_loaded <= rx & rx_loaded(10 downto 1); 
 								rx_state <= data; 
 							end if;
 							
@@ -90,16 +90,12 @@ architecture behaviour of receiver is
 							if (over_s_counter < 15) then
 								over_s_counter := over_s_counter + 1;
 								rx_state <= data; 
-							elsif (n < 10) then --parity + w
+							elsif (n < 10) then 
 								over_s_counter := 0;
 								n := n + 1; 
-								rx_loaded <= rx & rx_loaded(10 downto 1); --parity + w
+								rx_loaded <= rx & rx_loaded(10 downto 1); 
 								rx_state <= data;
-							else
-								--rx_data <= rx_loaded(w downto 1); 
-								--rx_error <= rx_loaded(0) or parity_error or not rx; 
-								--rx_busy <= '0'; 
-								--rx_state <= idle; 
+							else 
 								rx_state <= stop;
 							end if;
 							
@@ -119,7 +115,7 @@ architecture behaviour of receiver is
 									rx_busy <= '1';
 								end if; 
 								rx_error <= rx_loaded(0) or parity_error or not rx;
-								--rx_state <= idle; 
+								 
 							end if; 
 							
 						when error_state =>
@@ -136,15 +132,5 @@ architecture behaviour of receiver is
 			data_parity(i+1) <= data_parity(i) xor rx_loaded(i + 1); 
 		end generate; 
 		
-		parity_error <= data_parity(w) xor rx_loaded(9); --parity + w - 1
-	end behaviour; 
-							
-								
-			
-								
-			
-			
-		
-			
- 
-		
+		parity_error <= data_parity(w) xor rx_loaded(9); 
+end behaviour; 
