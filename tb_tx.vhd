@@ -15,7 +15,9 @@ architecture test of tb_tx is
 			clk : in std_logic;
 			rst : in std_logic;
 			tx_data  : in std_logic_vector(w-1 downto 0); 
-			rx_busy  : in std_logic;
+			tx_ena  : in std_logic; 
+			rx_busy : in std_logic;
+			tx_busy : out std_logic;
 			tx_bit  : out std_logic); 
 	end component;
 	
@@ -24,12 +26,12 @@ architecture test of tb_tx is
 	signal clk : std_logic := '1'; 
 	signal rst, rx_busy : std_logic; 
 	signal tx_data : std_logic_vector (7 downto 0);
-	signal tx_bit : std_logic; 
+	signal tx_ena, tx_busy, tx_bit : std_logic; 
 
 	begin
 		DUT: transmitter
 
-		PORT MAP (clk => clk, rst => rst, rx_busy => rx_busy, tx_data => tx_data, tx_bit => tx_bit); 
+		PORT MAP (clk => clk, rst => rst, tx_ena => tx_ena, rx_busy => rx_busy, tx_data => tx_data, tx_busy => tx_busy, tx_bit => tx_bit); 
 
 		clk <= not clk after period;
 		
@@ -39,6 +41,7 @@ architecture test of tb_tx is
 				--Test Case #1: Reset unset but receiver buffer not empty (do not transmit)
 				rst <= '1';
 				rx_busy <= '1';
+				tx_ena <= '1'; 
 				tx_data <= "00000111";
 				wait for 416000 ns;
 				
@@ -66,6 +69,13 @@ architecture test of tb_tx is
 				
 				tx_data <= "01000101";
 				wait for 1040000 ns;
+				
+				--Test Case #6: disabling tx_ena
+				tx_ena <= '0'; 
+				wait for 416000 ns; 
+				
+				tx_ena <= '1'; 
+				wait for 1040000 ns; 
 				
 				wait;
 		end process;

@@ -9,9 +9,11 @@ entity transmitter is
 	port(
 		clk : in std_logic;
 		rst : in std_logic;
-		tx_data  : in std_logic_vector(w-1 downto 0); 
+		tx_data  : in std_logic_vector(w-1 downto 0);
+		tx_ena   : in std_logic; 
 		rx_busy  : in std_logic;
-		tx_bit  : out std_logic); 
+		tx_busy  : out std_logic;
+		tx_bit   : out std_logic); 
 end transmitter;
 
 architecture behaviour of transmitter is
@@ -53,6 +55,7 @@ architecture behaviour of transmitter is
 					over_s_counter := 0;
 					n := 0;
 					parity_bit <= '0';
+					tx_busy <= '0'; -- adding
 					tx_bit <= '0';
 					tx_state <= idle;
 				
@@ -61,10 +64,12 @@ architecture behaviour of transmitter is
 						when idle =>
 							tx_bit <= '1';
 							over_s_counter := 0;
-							if (rx_busy = '0') then
+							if (rx_busy = '0' and tx_ena = '1') then -- changing
 								tx_state <= start;
+								tx_busy <= '1'; -- adding
 							else
 								tx_state <= idle;
+								tx_busy <= '0'; -- adding
 							end if;
 						
 						when start =>
@@ -102,11 +107,12 @@ architecture behaviour of transmitter is
 						when stop =>
 							if (over_s_counter < 15) then
 								over_s_counter := over_s_counter + 1;
-								tx_state <= stop;
+								tx_state <= stop; 
 							else
 								tx_bit <= '1';
 								parity_bit <= '0';
 								tx_state <= idle;
+								tx_busy <= '0'; -- adding
 							end if;
 					end case;
 				end if;
