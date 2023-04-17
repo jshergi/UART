@@ -55,7 +55,7 @@ architecture behaviour of transmitter is
 					over_s_counter := 0;
 					n := 0;
 					parity_bit <= '0';
-					tx_busy <= '0'; -- adding
+					tx_busy <= '0';
 					tx_bit <= '0';
 					tx_state <= idle;
 				
@@ -64,12 +64,12 @@ architecture behaviour of transmitter is
 						when idle =>
 							tx_bit <= '1';
 							over_s_counter := 0;
-							if (rx_busy = '0' and tx_ena = '1' and tx_busy = '0') then -- changing
+							if (rx_busy = '0' and tx_ena = '0' and tx_busy = '0') then
 								tx_state <= start;
-								tx_busy <= '1'; -- adding
+								tx_busy <= '1';
 							else
 								tx_state <= idle;
-								tx_busy <= '0'; -- adding
+								tx_busy <= '0';
 							end if;
 						
 						when start =>
@@ -112,7 +112,7 @@ architecture behaviour of transmitter is
 								tx_bit <= '1';
 								parity_bit <= '0';
 								tx_state <= idle;
-								tx_busy <= '0'; -- adding
+								tx_busy <= '0';
 							end if;
 					end case;
 				end if;
