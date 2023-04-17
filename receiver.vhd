@@ -43,7 +43,7 @@ architecture behaviour of receiver is
 	
 	begin
 		baud_r : baud_rate_generator port map ( 
-			clk => clk_b, rst => rst_b, baud_pulse => baud_pulse_b, sampling_pulse => sampling_pulse_b); 
+			clk => clk_b, rst => rst_b, sampling_pulse => sampling_pulse_b); 
 			clk_b <= clk; 
 			rst_b <= rst; 
 		process (rst, sampling_pulse_b, clk)  
@@ -57,7 +57,7 @@ architecture behaviour of receiver is
 					n := 0;
 					rx_busy <= '0';
 					rx_error <= '0';
-					rx_data <= (others => 'X'); -- should be unknown when rst
+					rx_data <= (others => '0');
 					rx_state <= idle; 
 				elsif (rising_edge(clk) and sampling_pulse_b = '1') then 
 					case rx_state is 
