@@ -69,7 +69,7 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '0'; 
 		wait for 104000 ns;
 		
-		rx <= '1'; -- Parity bit: odd for "00000111"
+		rx <= '1'; -- Parity bit: 1 because of odd number of ones for "00000111"
 		wait for 104000 ns;
 		
 		rx <= '0'; --1 -- Stop bit: incorrect (should be high)
@@ -107,7 +107,7 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '0'; 
 		wait for 104000 ns;
 		
-		rx <= '0'; -- Parity bit: should be odd for "00000111"
+		rx <= '0'; -- Parity bit: 1 because of odd number of ones for "00000111"
 		wait for 104000 ns;
 		
 		rx <= '1'; -- Stop bit: correct
@@ -142,7 +142,7 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '0'; 
 		wait for 104000 ns;
 		
-		rx <= '1'; -- Parity bit: odd for "00000111"
+		rx <= '1'; -- Parity bit: 1 because of odd number of ones for "00000111"
 		wait for 104000 ns;
 		
 		rx <= '1'; -- Stop bit: correct
@@ -176,7 +176,7 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '0'; 
 		wait for 104000 ns;
 		
-		rx <= '0'; -- Parity bit: even for "00110110"
+		rx <= '0'; -- Parity bit: 0 because of even number of ones for "00110110"
 		wait for 104000 ns;
 		
 		rx <= '1'; -- Stop bit: correct
@@ -216,7 +216,7 @@ PORT MAP (clk => clk, rst => rst, rx => rx, rx_busy => rx_busy, rx_error => rx_e
 		rx <= '1'; 
 		wait for 104000 ns;
 		
-		rx <= '1'; -- Parity bit: odd for "11011001"
+		rx <= '1'; -- Parity bit: 1 because of odd number of ones for "11011001"
 		wait for 104000 ns;
 		
 		rx <= '1'; -- Stop bit: correct
