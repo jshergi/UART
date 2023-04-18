@@ -5,11 +5,11 @@ USE IEEE.NUMERIC_STD.ALL;
 LIBRARY WORK;
 USE WORK.ALL;
 
-----------------------------------------------------------------------
+-------------------------------------------------------------------------
 --
---  This is the debouncer for the UART Project.
+--  This is the debouncer for the UART Project to stabalize the input key
 --
------------------------------------------------------------------------
+-------------------------------------------------------------------------
 
 ENTITY debouncer IS
 	PORT(input_key : IN STD_LOGIC; -- the input key to be debounced

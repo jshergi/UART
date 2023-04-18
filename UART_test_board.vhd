@@ -2,6 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+-----------------------------------------------------------------------
+--
+--  This is the top-level of the UART protocol to show the transmission
+--  and reception of data between 2 UART components on the board.
+-- 
+-----------------------------------------------------------------------
+
 entity UART_test_board is 
 	port(CLOCK_50 : in std_logic;
 		SW  : in std_logic_vector(15 downto 0);
@@ -63,6 +70,7 @@ architecture behaviour of UART_test_board is
 	
 	begin
 	
+	-- Debounce the enable keys used by the transmitter
 	Obj_debouced_tx_ena1: debouncer
 						PORT MAP(input_key => KEY(2),
 									debounced_key => debouced_tx_ena1,
@@ -74,12 +82,16 @@ architecture behaviour of UART_test_board is
 									debounced_key => debouced_tx_ena2,
 									reset => KEY(0),
 									clk => CLOCK_50);
-																  
+		
+   -- Display the received data in the red LEDs
 	LEDR(15 downto 8) <= uart2_data_out;
 	LEDR(7 downto 0) <= uart1_data_out;
+	
+	-- Display any errors in the green LEDs
 	LEDG(0) <= rx_error1;
 	LEDG(1) <= rx_error2;
 
+	-- Transmit the data provided by SW between the UART components
 	UART1 : UART port map (clk => CLOCK_50, rst => KEY(0), rx_busy_tx => rx_busy2, tx_data => SW(7 downto 0), 
 								  tx_bit => tx_bit1, tx_ena => debouced_tx_ena1, rx_busy => rx_busy1, rx_error => rx_error1,
 								  rx_data => uart1_data_out, rx => tx_bit2);
@@ -88,13 +100,13 @@ architecture behaviour of UART_test_board is
 								  rx_data => uart2_data_out,rx => tx_bit1);
 								  
 								  
-								  
+	-- Dipay the output from UART2 to HEX7&HEX86 and the output from UART1 to HEX5&HEX4	(in hex)
 	Obj_digit7seg_HEX7: digit7seg PORT MAP (digit => (uart2_data_out(7 downto 4)), seg7 => HEX7);
 	Obj_digit7seg_HEX6: digit7seg PORT MAP (digit => (uart2_data_out(3 downto 0)), seg7 => HEX6);
 	Obj_digit7seg_HEX5: digit7seg PORT MAP (digit => (uart1_data_out(7 downto 4)), seg7 => HEX5);
 	Obj_digit7seg_HEX4: digit7seg PORT MAP (digit => (uart1_data_out(3 downto 0)), seg7 => HEX4);
 	
-	-- turn off the unused HEX display
+	-- Turn off the unused HEX display
 	HEX3 <= "1111111";
 	HEX2 <= "1111111";
 	HEX1 <= "1111111";

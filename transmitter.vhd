@@ -2,6 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+----------------------------------------------------------
+--
+--  This is the transmitter used to transmit an 8-bit data,
+--  bit-by-bit.
+-- 
+----------------------------------------------------------
+
 entity transmitter is
 	generic(
 		w : integer := 8);
@@ -79,7 +86,7 @@ architecture behaviour of transmitter is
 							else
 								over_s_counter := 0;
 								n := 0; 
-								tx_bit <= '0';
+								tx_bit <= '0'; -- send start bit (logic '0')
 								tx_loaded <= tx_data;
 								tx_state <= data;
 							end if;
@@ -90,9 +97,9 @@ architecture behaviour of transmitter is
 								tx_state <= data;
 							
 							elsif (n < 8) then
-								tx_bit <= tx_loaded(0); -- send LSB first and MSB last
+								tx_bit <= tx_loaded(0); -- send data with LSB first and MSB last
 								tx_loaded <= '0' & tx_loaded(7 downto 1);
-								parity_bit <= tx_loaded(0) xor parity_bit; 
+								parity_bit <= tx_loaded(0) xor parity_bit; -- calculate parity bit 
 								n := n + 1;
 								over_s_counter := 0;
 								tx_state <= data;
@@ -100,7 +107,7 @@ architecture behaviour of transmitter is
 							else
 								over_s_counter := 0;
 								n := 0; 
-								tx_bit <= parity_bit;
+								tx_bit <= parity_bit; -- send parity bit
 								tx_state <= stop;
 							end if;
 							
@@ -109,8 +116,8 @@ architecture behaviour of transmitter is
 								over_s_counter := over_s_counter + 1;
 								tx_state <= stop; 
 							else
-								tx_bit <= '1';
-								parity_bit <= '0';
+								tx_bit <= '1'; -- send stop bit (logic '1')
+								parity_bit <= '0'; -- reset parity bit
 								tx_state <= idle;
 								tx_busy <= '0';
 							end if;
