@@ -2,6 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+----------------------------------------------------------
+--
+--  This is the receiver used to receive data bit by bit
+--  and obtain the corresponding 8-bit data.
+-- 
+----------------------------------------------------------
+
 entity receiver is 
 
 	generic(
@@ -57,13 +64,13 @@ architecture behaviour of receiver is
 					n := 0;
 					rx_busy <= '0';
 					rx_error <= '0';
-					rx_data <= (others => '0');
+					rx_data <= (others => '0'); -- clear output on reset
 					rx_state <= idle; 
 				elsif (rising_edge(clk) and sampling_pulse_b = '1') then 
 					case rx_state is 
 						when idle =>
 							rx_busy <= '0';
-							if (rx = '0') then
+							if (rx = '0') then -- read start bit (logic '0')
 								over_s_counter := 0; 
 								rx_busy <= '1'; 
 								rx_state <= start;
@@ -93,7 +100,7 @@ architecture behaviour of receiver is
 							elsif (n < 10) then 
 								over_s_counter := 0;
 								n := n + 1; 
-								rx_loaded <= rx & rx_loaded(10 downto 1); 
+								rx_loaded <= rx & rx_loaded(10 downto 1); -- read each data bit
 								rx_state <= data;
 							else 
 								rx_state <= stop;
@@ -107,14 +114,14 @@ architecture behaviour of receiver is
 								error := rx_loaded(0) or parity_error or not rx;
 								
 								if (error = '0') then 
-									rx_data <= rx_loaded(w downto 1);
+									rx_data <= rx_loaded(w downto 1); -- output read data
 									rx_state <= idle;
 									rx_busy <= '0';	
 								else 
 									rx_state <= error_state; 
 									rx_busy <= '1';
 								end if; 
-								rx_error <= rx_loaded(0) or parity_error or not rx;
+								rx_error <= rx_loaded(0) or parity_error or not rx; -- start/parity/stop bit incorrect
 								 
 							end if; 
 							
@@ -127,6 +134,7 @@ architecture behaviour of receiver is
 				end if;
 		end process; 
 		
+		-- calculate parity and parity error
 		data_parity(0) <= parity_even;
 		data_parity_logic: FOR i in 0 to w-1 generate
 			data_parity(i+1) <= data_parity(i) xor rx_loaded(i + 1); 

@@ -2,6 +2,13 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+----------------------------------------------------------
+--
+--  This is the Baud Rate Generator which generates the 
+--  baud rate and the sampling rate.
+-- 
+----------------------------------------------------------
+
 entity baud_rate_generator is 
 
 	generic(

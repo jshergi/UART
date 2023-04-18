@@ -2,6 +2,12 @@ library ieee;
 use ieee.std_logic_1164.all; 
 use ieee.numeric_std.all;
 
+----------------------------------------------------------
+--
+--  This is the TestBench corresponding to the receiver.
+-- 
+----------------------------------------------------------
+
 entity tb_rx is
 end tb_rx; 
 

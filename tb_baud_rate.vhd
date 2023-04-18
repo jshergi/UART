@@ -2,6 +2,12 @@ library ieee;
 use ieee.std_logic_1164.all; 
 use ieee.numeric_std.all;
 
+-----------------------------------------------------------------
+--
+--  This is the TestBench corresponding to the BaudRateGenerator.
+-- 
+-----------------------------------------------------------------
+
 entity tb_baud_rate is
 end tb_baud_rate; 
 
