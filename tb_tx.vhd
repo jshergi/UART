@@ -40,7 +40,7 @@ architecture test of tb_tx is
 				--Test Case #1: Reset unset but receiver buffer not empty (do not transmit)
 				rst <= '1';
 				rx_busy <= '1';
-				tx_ena <= '1'; 
+				tx_ena <= '0'; 
 				tx_data <= "00000111";
 				wait for 416000 ns;
 				
@@ -70,10 +70,10 @@ architecture test of tb_tx is
 				wait for 1040000 ns;
 				
 				--Test Case #6: disabling tx_ena
-				tx_ena <= '0'; 
+				tx_ena <= '1'; 
 				wait for 416000 ns; 
 				
-				tx_ena <= '1'; 
+				tx_ena <= '0'; 
 				wait for 1040000 ns; 
 				
 				wait;
