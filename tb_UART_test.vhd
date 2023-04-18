@@ -42,12 +42,14 @@ architecture test of tb_UART_test is
 		rst <= '1';
 		uart1_data_in <= "00100100";
 		uart2_data_in <= "01001001"; 
-		tx_ena1 <= '1';
-		tx_ena2 <= '1'; 
-		wait for 1040000 ns;
+		tx_ena1 <= '0';
+		tx_ena2 <= '0'; 
+		wait for 1560000 ns;
 
 		-- Test case #2: Reset - transmission stops
 		rst <= '0';
+		tx_ena1 <= '1'; 
+		tx_ena2 <= '1';
 		wait for 104000 ns;
 
 		rst <= '1';
@@ -56,6 +58,8 @@ architecture test of tb_UART_test is
 		-- Test case #3: Transmission with even parity
 		uart1_data_in <= "00111100";
 		uart2_data_in <= "11101101"; 
+		tx_ena1 <= '0';
+		tx_ena2 <= '0';
 		wait for 1040000 ns;
 
 		uart1_data_in <= "11000011";
@@ -85,6 +89,36 @@ architecture test of tb_UART_test is
 		-- Test case #8: Base case - transmit 255
 		uart1_data_in <= "11111111";
 		uart2_data_in <= "11111111"; 
+		wait for 1040000 ns;
+		
+		-- Test case #9: Base case - transmit 2, only uart2 transmission should be successful
+		uart1_data_in <= "00000010";
+		uart2_data_in <= "00000010"; 
+		tx_ena1 <= '1';
+		tx_ena2 <= '0';
+		wait for 1040000 ns;
+		
+		-- Test case #10: Base case - transmit 2, only uart1 transmission should be successful
+		uart1_data_in <= "00000011";
+		uart2_data_in <= "00000010"; 
+		tx_ena1 <= '0';
+		tx_ena2 <= '1';
+		wait for 1040000 ns;
+		
+		-- Test case #11: Base case - transmit 64, only no transmission should be successful
+		uart1_data_in <= "01000000";
+		uart2_data_in <= "01000000"; 
+		tx_ena1 <= '1';
+		tx_ena2 <= '1';
+		wait for 1040000 ns;
+		
+		-- Test case #12: Base case - transmit 64
+		uart1_data_in <= "01000000";
+		uart2_data_in <= "01000000"; 
+		tx_ena1 <= '0';
+		tx_ena2 <= '0';
+		
+		
 		wait for 1040000 ns;
 
 		wait;
